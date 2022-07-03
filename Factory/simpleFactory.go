@@ -1,4 +1,4 @@
-package simpleFactory
+package factory
 
 import "fmt"
 
@@ -38,13 +38,3 @@ func NewIphone(version int) IPhone {
 		return nil
 	}
 }
-
-// func main() {
-// 	iphone := NewIphone(110)
-// 	if iphone == nil {
-// 		fmt.Println("创建新IPhone失败")
-// 		return
-// 	}
-
-// 	iphone.LoginQQ()
-// }

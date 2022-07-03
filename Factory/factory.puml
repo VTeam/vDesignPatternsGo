@@ -1,0 +1,85 @@
+@startuml
+
+package "factory" {
+	interface "Factory" as factory.Factory {
+		+Create(owner: string): factory.Product
+		-createProduct(owner: string): factory.Product
+		-registerProduct(product: factory.Product)
+	}
+}
+
+
+	factory.Factory ..> factory.Product : <<return>> 
+
+package "factory" {
+	class "IDCard" as factory.IDCard <<E,#FFCC00>> {
+		-owner: string
+		+GetOwner(): string
+		+Use()
+	}
+}
+
+
+
+package "factory" {
+	class "IDCardFactory" as factory.IDCardFactory <<E,#FFCC00>> {
+		-products: []factory.Product
+		+Create(owner: string): factory.Product
+		-createProduct(owner: string): factory.Product
+		-registerProduct(idCard: factory.Product)
+	}
+}
+
+	factory.IDCardFactory --> factory.Product
+
+	factory.IDCardFactory ..> factory.Product : <<return>> 
+
+package "factory" {
+	interface "IPhone" as factory.IPhone {
+		+LoginQQ()
+	}
+}
+
+
+
+package "factory" {
+	class "IPhone110" as factory.IPhone110 <<E,#FFCC00>> {
+		+LoginQQ()
+	}
+}
+
+
+
+package "factory" {
+	class "IPhone13" as factory.IPhone13 <<E,#FFCC00>> {
+		+LoginQQ()
+	}
+}
+
+
+
+package "factory" {
+	class "IPhone7" as factory.IPhone7 <<E,#FFCC00>> {
+		+LoginQQ()
+	}
+}
+
+
+
+package "factory" {
+	interface "Product" as factory.Product {
+		+GetOwner(): string
+		+Use()
+	}
+}
+
+
+
+	factory.IDCard -up-|> factory.Product
+	factory.IDCardFactory -up-|> factory.Factory
+	factory.IPhone110 -up-|> factory.IPhone
+	factory.IPhone13 -up-|> factory.IPhone
+	factory.IPhone7 -up-|> factory.IPhone
+
+
+@enduml
