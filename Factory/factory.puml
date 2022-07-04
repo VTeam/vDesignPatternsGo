@@ -1,20 +1,27 @@
 @startuml
 
 package "factory" {
-	interface "Factory" as factory.Factory {
-		+Create(owner: string): factory.Product
-		-createProduct(owner: string): factory.Product
-		-registerProduct(product: factory.Product)
+	interface "Handler" as factory.Handler {
+		+GetName(): string
+		+Sink()
 	}
 }
 
 
-	factory.Factory ..> factory.Product : <<return>> 
 
 package "factory" {
-	class "IDCard" as factory.IDCard <<E,#FFCC00>> {
-		-owner: string
-		+GetOwner(): string
+	interface "LogFactory" as factory.LogFactory {
+		+Create(name: string): factory.Handler
+		-createHandler(name: string): factory.Handler
+		-registerHandler(h: factory.Handler)
+	}
+}
+
+
+	factory.LogFactory ..> factory.Handler : <<return>> 
+
+package "factory" {
+	interface "LogFactorySimple" as factory.LogFactorySimple {
 		+Use()
 	}
 }
@@ -22,64 +29,82 @@ package "factory" {
 
 
 package "factory" {
-	class "IDCardFactory" as factory.IDCardFactory <<E,#FFCC00>> {
-		-products: []factory.Product
-		+Create(owner: string): factory.Product
-		-createProduct(owner: string): factory.Product
-		-registerProduct(idCard: factory.Product)
-	}
-}
-
-	factory.IDCardFactory --> factory.Product
-
-	factory.IDCardFactory ..> factory.Product : <<return>> 
-
-package "factory" {
-	interface "IPhone" as factory.IPhone {
-		+LoginQQ()
-	}
-}
-
-
-
-package "factory" {
-	class "IPhone110" as factory.IPhone110 <<E,#FFCC00>> {
-		+LoginQQ()
-	}
-}
-
-
-
-package "factory" {
-	class "IPhone13" as factory.IPhone13 <<E,#FFCC00>> {
-		+LoginQQ()
-	}
-}
-
-
-
-package "factory" {
-	class "IPhone7" as factory.IPhone7 <<E,#FFCC00>> {
-		+LoginQQ()
-	}
-}
-
-
-
-package "factory" {
-	interface "Product" as factory.Product {
-		+GetOwner(): string
+	class "LogFile" as factory.LogFile <<E,#FFCC00>> {
 		+Use()
 	}
 }
 
 
 
-	factory.IDCard -up-|> factory.Product
-	factory.IDCardFactory -up-|> factory.Factory
-	factory.IPhone110 -up-|> factory.IPhone
-	factory.IPhone13 -up-|> factory.IPhone
-	factory.IPhone7 -up-|> factory.IPhone
+package "factory" {
+	class "LogFileFactory" as factory.LogFileFactory <<E,#FFCC00>> {
+		-handlers: []factory.Handler
+		+Create(name: string): factory.Handler
+		-createHandler(name: string): factory.Handler
+		-registerHandler(h: factory.Handler)
+	}
+}
+
+	factory.LogFileFactory --> factory.Handler
+
+	factory.LogFileFactory ..> factory.Handler : <<return>> 
+
+package "factory" {
+	class "LogFileHandler" as factory.LogFileHandler <<E,#FFCC00>> {
+		-name: string
+		+GetName(): string
+		+Sink()
+	}
+}
+
+
+
+package "factory" {
+	class "LogMQ" as factory.LogMQ <<E,#FFCC00>> {
+		+Use()
+	}
+}
+
+
+
+package "factory" {
+	class "LogStdOut" as factory.LogStdOut <<E,#FFCC00>> {
+		+Use()
+	}
+}
+
+
+
+package "factory" {
+	class "LogStdOutFactory" as factory.LogStdOutFactory <<E,#FFCC00>> {
+		-handlers: []factory.Handler
+		+Create(name: string): factory.Handler
+		-createHandler(name: string): factory.Handler
+		-registerHandler(h: factory.Handler)
+	}
+}
+
+	factory.LogStdOutFactory --> factory.Handler
+
+	factory.LogStdOutFactory ..> factory.Handler : <<return>> 
+
+package "factory" {
+	class "LogStdOutHandler" as factory.LogStdOutHandler <<E,#FFCC00>> {
+		-name: string
+		+GetName(): string
+		+Sink()
+	}
+}
+
+
+
+	factory.LogFile -up-|> factory.LogFactorySimple
+	factory.LogFileFactory -up-|> factory.LogFactory
+	factory.LogFileHandler -up-|> factory.Handler
+	factory.LogMQ -up-|> factory.LogFactorySimple
+	factory.LogStdOut -up-|> factory.LogFactorySimple
+	factory.LogStdOutFactory -up-|> factory.LogFactory
+	factory.LogStdOutHandler -up-|> factory.Handler
 
 
 @enduml
