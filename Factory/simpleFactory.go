@@ -2,39 +2,42 @@ package factory
 
 import "fmt"
 
-type IPhone interface {
-	LoginQQ()
+type LogFactorySimple interface {
+	Use()
 }
 
-type IPhone7 struct{}
+type LogFile struct{}
 
-func (p *IPhone7) LoginQQ() {
-	fmt.Println("正在使用 IPhone7 登陆QQ")
+func (l *LogFile) Use() {
+	fmt.Println("Use LogFile handle log")
 }
 
-type IPhone13 struct{}
+type LogStdOut struct{}
 
-func (p *IPhone13) LoginQQ() {
-	fmt.Println("正在使用 IPhone13 登陆QQ")
+func (l *LogStdOut) Use() {
+	fmt.Println("Use LogStdOut handle log")
 }
 
-type IPhone110 struct{}
+type LogMQ struct{}
 
-func (p *IPhone110) LoginQQ() {
-	fmt.Println("正在使用 IPhone110 登陆QQ")
+func (l *LogMQ) Use() {
+	fmt.Println("Use LogMQ handle log")
+
 }
 
-//IPhone生产工厂，根据要求版本号生成新的IPhone
-func NewIphone(version int) IPhone {
-	switch version {
-	case 7:
-		return &IPhone7{}
-	case 13:
-		return &IPhone13{}
-	case 110:
-		return &IPhone110{}
+// 日志工厂，根据输入字符串实例化对应的日志类
+// 优点： 简单工厂模式可以根据需求，动态生成使用者所需类的对象，而使用者不用去知道怎么创建对象，使得各个模块各司其职，降低了系统的耦合性
+// 缺点： 扩展性差，违背了开闭原则,新增日志类型时，需要修改工厂方法代码。
+func NewLogFactory(name string) LogFactorySimple {
+	switch name {
+	case "file":
+		return &LogFile{}
+	case "stdout":
+		return &LogStdOut{}
+	case "mq":
+		return &LogMQ{}
 	default:
-		//该工厂不支持该版本号的IPhone生产，所以返回空
 		return nil
 	}
+
 }

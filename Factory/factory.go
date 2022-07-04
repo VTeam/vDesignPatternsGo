@@ -2,90 +2,73 @@ package factory
 
 import "fmt"
 
-// 工厂接口
-type Factory interface {
-	// 对外公开的构建实例的方法
-	Create(owner string) Product
-
-	// 实际生成实例的方法
-	createProduct(owner string) Product
-
-	// 保存已生成的实例
-	registerProduct(product Product)
+type LogFactory interface {
+	Create(name string) Handler
+	createHandler(name string) Handler
+	registerHandler(h Handler)
 }
 
-// 产品接口
-type Product interface {
-	// 获取产品持有人名字
-	GetOwner() string
-
-	// 使用
-	Use()
-}
-
-// 身份证类型，实现了Product接口
-type IDCard struct {
-	owner string `json:"owner,omitempty"`
-}
-
-func (c *IDCard) GetOwner() string {
-	return c.owner
-}
-
-func (c *IDCard) Use() {
-	fmt.Printf("使用了%s的身份证抢火车票!\n", c.owner)
-}
-
-// 身份证工厂，实现了Factory接口
-type IDCardFactory struct {
-	products []Product `json:"products,omitempty"`
-}
-
-func (f *IDCardFactory) Create(owner string) Product {
-	idCard := f.createProduct(owner)
-	f.registerProduct(idCard)
-	return idCard
-}
-
-func (f *IDCardFactory) createProduct(owner string) Product {
-	return &IDCard{owner: owner}
-}
-
-func (f *IDCardFactory) registerProduct(idCard Product) {
-	f.products = append(f.products, idCard)
+type Handler interface {
+	Sink()
+	GetName() string
 }
 
 type LogFileHandler struct {
 	name string
 }
 
-func (lf *LogFileHandler) GetOwner() string {
+func (lf *LogFileHandler) GetName() string {
 
 	return lf.name
 }
-func (lf *LogFileHandler) Use() {
-
+func (lf *LogFileHandler) Sink() {
+	fmt.Printf("Use %s Log Handler handle Log!\n", lf.name)
 }
 
-// type LogStdOutHandler struct{}
-
-// type LogMQHandler struct{}
-
-type LogFactory struct {
-	handlers []Product
+type LogFileFactory struct {
+	handlers []Handler
 }
 
-func (t *LogFactory) Create(name string) Product {
-	handler := t.createProduct(name)
-	t.registerProduct(handler)
+func (t *LogFileFactory) Create(name string) Handler {
+	handler := t.createHandler(name)
+	t.registerHandler(handler)
 	return handler
 }
 
-func (t *LogFactory) createProduct(name string) Product {
+func (t *LogFileFactory) createHandler(name string) Handler {
 	return &LogFileHandler{name: name}
 }
 
-func (t *LogFactory) registerProduct(h Product) {
+func (t *LogFileFactory) registerHandler(h Handler) {
 	t.handlers = append(t.handlers, h)
+}
 
+type LogStdOutHandler struct {
+	name string
+}
+
+func (ls *LogStdOutHandler) GetName() string {
+
+	return ls.name
+}
+func (ls *LogStdOutHandler) Sink() {
+	fmt.Printf("Use %s Log Handler handle Log!\n", ls.name)
+}
+
+type LogStdOutFactory struct {
+	handlers []Handler
+}
+
+func (t *LogStdOutFactory) Create(name string) Handler {
+	handler := t.createHandler(name)
+	t.registerHandler(handler)
+	return handler
+}
+
+func (t *LogStdOutFactory) createHandler(name string) Handler {
+	return &LogFileHandler{name: name}
+}
+
+func (t *LogStdOutFactory) registerHandler(h Handler) {
+	t.handlers = append(t.handlers, h)
 }
