@@ -13,30 +13,38 @@ type resourcePoolConfig struct {
 	miniIdle int32
 }
 
-type resourcePoolConfigOptions struct {
+type Options struct {
 	maxTotal int32
 	maxIdle  int32
 	miniIdle int32
 }
 
-func NewResourcePoolConfig(name string, opts resourcePoolConfigOptions) *resourcePoolConfig {
+func setOptionsDefaults(options Options) Options {
+
+	if options.maxTotal == 0 {
+		options.maxTotal = DEFAULT_MAX_TOTAL
+	}
+	if options.maxIdle == 0 {
+		options.maxIdle = DEFAULT_MAX_IDLE
+	}
+	if options.miniIdle == 0 {
+		options.miniIdle = DEFAULT_MIN_IDLE
+	}
+	return options
+}
+
+func NewResourcePoolConfig(name string, options Options) *resourcePoolConfig {
+
 	if name == "" {
 		panic("name cannot be empty")
 	}
-	if opts.maxTotal == 0 {
-		opts.maxTotal = DEFAULT_MAX_TOTAL
-	}
-	if opts.maxIdle == 0 {
-		opts.maxIdle = DEFAULT_MAX_IDLE
-	}
-	if opts.miniIdle == 0 {
-		opts.miniIdle = DEFAULT_MIN_IDLE
-	}
+
+	options = setOptionsDefaults(options)
 
 	return &resourcePoolConfig{
 		name:     name,
-		maxTotal: opts.maxTotal,
-		miniIdle: opts.miniIdle,
-		maxIdle:  opts.maxIdle,
+		maxTotal: options.maxTotal,
+		miniIdle: options.miniIdle,
+		maxIdle:  options.maxIdle,
 	}
 }
